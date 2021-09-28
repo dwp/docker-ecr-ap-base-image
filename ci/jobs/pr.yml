@@ -1,0 +1,32 @@
+jobs:
+  - name: docker-ecr-template-pr
+    plan:
+      - get: docker-ecr-template-pr
+        trigger: true
+        version: every
+      - put: docker-ecr-template-pr
+        params:
+          path: docker-ecr-template-pr
+          status: pending
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        input_mapping:
+          docker-ecr-template: docker-ecr-template-pr
+      - .: (( inject meta.plan.get-gha-ecr-creds ))
+        input_mapping:
+          docker-ecr-template: docker-ecr-template-pr
+      - .: (( inject meta.plan.terraform-plan ))
+        input_mapping:
+          docker-ecr-template: docker-ecr-template-pr
+        params:
+          TF_WORKSPACE: "management"
+          DETAILED_EXITCODE: ""
+        on_failure:
+          put: docker-ecr-template-pr
+          params:
+            path: docker-ecr-template-pr
+            status: failure
+        on_success:
+          put: docker-ecr-template-pr
+          params:
+            path: docker-ecr-template-pr
+            status: success

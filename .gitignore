@@ -1,0 +1,6 @@
+.idea
+**/terraform.tf
+**/terraform.tfvars
+.terraform
+accounts.json
+gha_ecr_sts_creds

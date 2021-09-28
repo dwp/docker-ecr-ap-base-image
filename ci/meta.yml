@@ -1,0 +1,233 @@
+meta:
+  resources:
+    - name: ecr-resource
+      type: registry-image-resource
+      source:
+        repository: unset
+        aws_region: ((dataworks.aws_region))
+        aws_role_arn: arn:aws:iam::((dataworks.aws_management_dev_acc)):role/ci
+        aws_access_key_id: ((dataworks-secrets.ci_aws_access_key_id))
+        aws_secret_access_key: ((dataworks-secrets.ci_aws_secret_access_key))
+  plan:
+    terraform-common-config:
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          TF_INPUT: false
+          TF_CLI_ARGS_apply: -lock-timeout=300s
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_VAR_costcode: ((dataworks.costcode))
+    terraform-bootstrap-githubconfig:
+      task: terraform-bootstrap-githubconfig
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: dwpdigital/jinja-yaml-aws
+            version: 0.0.19
+            tag: 0.0.19
+        params:
+          AWS_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              python bootstrap_terraform.py
+              cp terraform.tf ../terraform-bootstrap-githubconfig
+              cp terraform.tfvars ../terraform-bootstrap-githubconfig
+          dir: dataworks-github-config
+        inputs:
+          - name: dataworks-github-config
+        outputs:
+          - name: terraform-bootstrap-githubconfig
+        params:
+          AWS_REGION: eu-west-2
+          AWS_SECRETS_ROLE: arn:aws:iam::((aws_account.management)):role/ci
+    terraform-bootstrap:
+      task: terraform-bootstrap
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              python bootstrap_terraform.py
+              cp terraform.tf accounts.json ../terraform-bootstrap
+          dir: docker-ecr-template
+        inputs:
+          - name: docker-ecr-template
+        outputs:
+          - name: terraform-bootstrap
+
+    get-gha-ecr-creds:
+      task: get-gha-ecr-creds
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-bootstrap/accounts.json .
+              ./get_ecr_sts_credentials.sh 
+              cp gha_ecr_sts_creds ../gha_ecr_sts_creds
+          dir: docker-ecr-template
+        inputs:
+          - name: docker-ecr-template
+          - name: terraform-bootstrap
+        outputs:
+          - name: gha_ecr_sts_creds
+
+    terraform-apply-githubconfig:
+      task: terraform-apply-githubconfig
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-bootstrap-githubconfig/* .
+              echo "Loading STS creds with shell debug disabled"
+              set +x
+              source ../gha_ecr_sts_creds/gha_ecr_sts_creds
+              set -x
+              terraform workspace show
+              terraform init
+              terraform plan -target github_actions_secret.dev_ecr_temp_access_key_id -target github_actions_secret.dev_ecr_temp_access_secret_key -target github_actions_secret.dev_ecr_temp_access_session_token -target github_actions_secret.dev_aws_account -target github_actions_secret.ecr_temp_access_key_id -target github_actions_secret.ecr_temp_access_secret_key -target github_actions_secret.ecr_temp_access_session_token -target github_actions_secret.aws_account -out terraform.plan
+              terraform apply -auto-approve terraform.plan
+          dir: dataworks-github-config
+        inputs:
+          - name: dataworks-github-config
+          - name: terraform-bootstrap-githubconfig
+          - name: gha_ecr_sts_creds
+        params:
+          TF_VAR_github_token: ((dataworks-secrets.concourse_github_pat))
+    terraform-apply:
+      task: terraform-apply
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-bootstrap/terraform.tf .
+              terraform workspace show
+              terraform init
+              terraform plan -out terraform.plan
+              terraform apply -auto-approve terraform.plan
+          dir: docker-ecr-template
+        inputs:
+          - name: docker-ecr-template
+          - name: terraform-bootstrap
+          - name: gha_ecr_sts_creds
+        params:
+          TF_VAR_github_token: ((dataworks-secrets.concourse_github_pat))
+    terraform-plan-githubconfig:
+      task: terraform-plan-githubconfig
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-bootstrap-githubconfig/* .
+              echo "Loading STS creds with shell debug disabled"
+              set +x
+              source ../gha_ecr_sts_creds/gha_ecr_sts_creds
+              set -x
+              terraform workspace show
+              terraform init
+              terraform plan -target github_actions_secret.dev_ecr_temp_access_key_id -target github_actions_secret.dev_ecr_temp_access_secret_key -target github_actions_secret.dev_ecr_temp_access_session_token -target github_actions_secret.dev_aws_account -target github_actions_secret.ecr_temp_access_key_id -target github_actions_secret.ecr_temp_access_secret_key -target github_actions_secret.ecr_temp_access_session_token -target github_actions_secret.aws_account $DETAILED_EXITCODE
+          dir: dataworks-github-config
+        inputs:
+          - name: dataworks-github-config
+          - name: terraform-bootstrap-githubconfig
+          - name: gha_ecr_sts_creds
+      params:
+        DETAILED_EXITCODE: -detailed-exitcode
+        TF_CLI_ARGS_plan: -lock-timeout=300s
+        TF_INPUT: "false"
+        TF_VAR_github_token: ((dataworks-secrets.concourse_github_pat))
+        TF_VAR_github_webhook_token: ((dataworks.concourse_github_webhook_token))
+        TF_VAR_github_organization: dwp
+        TF_VAR_dockerhub_username: ((dataworks.dockerhub_username))
+        TF_VAR_dockerhub_password: ((dataworks-secrets.dockerhub_token))
+        TF_VAR_snyk_token: ((dataworks-secrets.snyk_token))
+        TF_VAR_slack_webhook_url: ((dataworks.slack_webhook_url))
+        TF_VAR_github_username: ((dataworks.concourse_github_username))
+        TF_VAR_github_email: ((dataworks.concourse_github_email))
+        TF_VAR_terraform_12_version: ((dataworks.terraform_12_version))
+        TF_VAR_terraform_13_version: ((dataworks.terraform_13_version))
+    terraform-plan:
+      task: terraform-plan
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../terraform-bootstrap/terraform.tf .
+              echo "Loading STS creds with shell debug disabled"
+              set +x
+              source ../gha_ecr_sts_creds/gha_ecr_sts_creds
+              set -x
+              terraform workspace show
+              terraform init
+              terraform plan $DETAILED_EXITCODE
+          dir: docker-ecr-template
+        inputs:
+          - name: docker-ecr-template
+          - name: terraform-bootstrap
+          - name: gha_ecr_sts_creds
+      params:
+        DETAILED_EXITCODE: -detailed-exitcode
+        TF_VAR_github_token: ((dataworks-secrets.concourse_github_pat))
+    trigger-gha-workflow:
+      task: trigger-gha-workflow
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        run:
+          path: sh
+          args:
+            - -ec
+            - |
+              curl -X POST -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/dwp/docker-ecr-template/actions/workflows/main.yml/dispatches \
+              -d '{"ref": "master"}' -u "$CONCOURSE_GITHUB_USERNAME:$GITHUB_TOKEN"
+        params:
+          CONCOURSE_GITHUB_USERNAME: ((dataworks.concourse_github_username))
+          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))

@@ -1,0 +1,8 @@
+groups:
+  - name: master
+    jobs:
+      - management-dev
+      - management
+  - name: pull-request
+    jobs:
+      - docker-ecr-template-pr
