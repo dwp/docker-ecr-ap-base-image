@@ -7,7 +7,7 @@ on:
       - '**/*.md'
 
 env:
-  IMAGE_NAME: docker-ecr-template
+  IMAGE_NAME: docker-ecr-ap-base-image
 
 jobs:
   docker-build-and-scan:

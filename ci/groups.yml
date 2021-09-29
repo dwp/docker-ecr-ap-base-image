@@ -5,4 +5,4 @@ groups:
       - management
   - name: pull-request
     jobs:
-      - docker-ecr-template-pr
+      - docker-ecr-ap-base-image-pr

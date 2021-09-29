@@ -9,7 +9,7 @@ spruce:
         regexp: ".*.yml"
     to: aviator_pipeline.yml
 fly:
-  name: docker-ecr-template
+  name: docker-ecr-ap-base-image
   target: aws-concourse
   config: aviator_pipeline.yml
   expose: true
