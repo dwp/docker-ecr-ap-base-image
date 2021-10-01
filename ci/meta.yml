@@ -69,9 +69,9 @@ meta:
             - |
               python bootstrap_terraform.py
               cp terraform.tf accounts.json ../terraform-bootstrap
-          dir: docker-ecr-template
+          dir: docker-ecr-ap-base-image
         inputs:
-          - name: docker-ecr-template
+          - name: docker-ecr-ap-base-image
         outputs:
           - name: terraform-bootstrap
 
@@ -95,9 +95,9 @@ meta:
               cp ../terraform-bootstrap/accounts.json .
               ./get_ecr_sts_credentials.sh 
               cp gha_ecr_sts_creds ../gha_ecr_sts_creds
-          dir: docker-ecr-template
+          dir: docker-ecr-ap-base-image
         inputs:
-          - name: docker-ecr-template
+          - name: docker-ecr-ap-base-image
           - name: terraform-bootstrap
         outputs:
           - name: gha_ecr_sts_creds
@@ -141,9 +141,9 @@ meta:
               terraform init
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
-          dir: docker-ecr-template
+          dir: docker-ecr-ap-base-image
         inputs:
-          - name: docker-ecr-template
+          - name: docker-ecr-ap-base-image
           - name: terraform-bootstrap
           - name: gha_ecr_sts_creds
         params:
@@ -202,9 +202,9 @@ meta:
               terraform workspace show
               terraform init
               terraform plan $DETAILED_EXITCODE
-          dir: docker-ecr-template
+          dir: docker-ecr-ap-base-image
         inputs:
-          - name: docker-ecr-template
+          - name: docker-ecr-ap-base-image
           - name: terraform-bootstrap
           - name: gha_ecr_sts_creds
       params:
@@ -226,7 +226,7 @@ meta:
             - -ec
             - |
               curl -X POST -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/dwp/docker-ecr-template/actions/workflows/main.yml/dispatches \
+              https://api.github.com/repos/dwp/docker-ecr-ap-base-image/actions/workflows/main.yml/dispatches \
               -d '{"ref": "master"}' -u "$CONCOURSE_GITHUB_USERNAME:$GITHUB_TOKEN"
         params:
           CONCOURSE_GITHUB_USERNAME: ((dataworks.concourse_github_username))

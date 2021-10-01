@@ -1,32 +1,32 @@
 jobs:
-  - name: docker-ecr-template-pr
+  - name: docker-ecr-ap-base-image-pr
     plan:
-      - get: docker-ecr-template-pr
+      - get: docker-ecr-ap-base-image-pr
         trigger: true
         version: every
-      - put: docker-ecr-template-pr
+      - put: docker-ecr-ap-base-image-pr
         params:
-          path: docker-ecr-template-pr
+          path: docker-ecr-ap-base-image-pr
           status: pending
       - .: (( inject meta.plan.terraform-bootstrap ))
         input_mapping:
-          docker-ecr-template: docker-ecr-template-pr
+          docker-ecr-ap-base-image: docker-ecr-ap-base-image-pr
       - .: (( inject meta.plan.get-gha-ecr-creds ))
         input_mapping:
-          docker-ecr-template: docker-ecr-template-pr
+          docker-ecr-ap-base-image: docker-ecr-ap-base-image-pr
       - .: (( inject meta.plan.terraform-plan ))
         input_mapping:
-          docker-ecr-template: docker-ecr-template-pr
+          docker-ecr-ap-base-image: docker-ecr-ap-base-image-pr
         params:
           TF_WORKSPACE: "management"
           DETAILED_EXITCODE: ""
         on_failure:
-          put: docker-ecr-template-pr
+          put: docker-ecr-ap-base-image-pr
           params:
-            path: docker-ecr-template-pr
+            path: docker-ecr-ap-base-image-pr
             status: failure
         on_success:
-          put: docker-ecr-template-pr
+          put: docker-ecr-ap-base-image-pr
           params:
-            path: docker-ecr-template-pr
+            path: docker-ecr-ap-base-image-pr
             status: success

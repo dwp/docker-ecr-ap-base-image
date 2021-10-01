@@ -1,17 +1,17 @@
 resources:
-  - name: docker-ecr-template-pr
+  - name: docker-ecr-ap-base-image-pr
     type: pull-request
     source:
-      repository: dwp/docker-ecr-template
+      repository: dwp/docker-ecr-ap-base-image
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 720h
 
-  - name: docker-ecr-template
+  - name: docker-ecr-ap-base-image
     type: git
     source:
       branch: master
-      uri: https://github.com/dwp/docker-ecr-template.git
+      uri: https://github.com/dwp/docker-ecr-ap-base-image.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 720h
