@@ -33,6 +33,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           # python -m pytest -v
+        working-directory: build
   
 
   format:
