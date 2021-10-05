@@ -118,7 +118,7 @@ meta:
               set -x
               terraform workspace show
               terraform init
-              terraform plan -target github_actions_secret.dev_ecr_temp_access_key_id -target github_actions_secret.dev_ecr_temp_access_secret_key -target github_actions_secret.dev_ecr_temp_access_session_token -target github_actions_secret.dev_aws_account -target github_actions_secret.ecr_temp_access_key_id -target github_actions_secret.ecr_temp_access_secret_key -target github_actions_secret.ecr_temp_access_session_token -target github_actions_secret.aws_account -out terraform.plan
+              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-github-config
         inputs:
@@ -164,7 +164,7 @@ meta:
               set -x
               terraform workspace show
               terraform init
-              terraform plan -target github_actions_secret.dev_ecr_temp_access_key_id -target github_actions_secret.dev_ecr_temp_access_secret_key -target github_actions_secret.dev_ecr_temp_access_session_token -target github_actions_secret.dev_aws_account -target github_actions_secret.ecr_temp_access_key_id -target github_actions_secret.ecr_temp_access_secret_key -target github_actions_secret.ecr_temp_access_session_token -target github_actions_secret.aws_account $DETAILED_EXITCODE
+              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account $DETAILED_EXITCODE
           dir: dataworks-github-config
         inputs:
           - name: dataworks-github-config
