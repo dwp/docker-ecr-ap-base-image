@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker image
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+        run: docker build -t -q ${{ env.IMAGE_NAME }}:latest .
         working-directory: build
 
   format:
