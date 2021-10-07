@@ -185,6 +185,7 @@ meta:
         TF_VAR_github_email: ((dataworks.concourse_github_email))
         TF_VAR_terraform_12_version: ((dataworks.terraform_12_version))
         TF_VAR_terraform_13_version: ((dataworks.terraform_13_version))
+        TF_VAR_docker_ecr_ap_base_image_gha_requirements: ((dataworks.docker_ecr_ap_base_image_requirements))
     terraform-plan:
       task: terraform-plan
       .: (( inject meta.plan.terraform-common-config ))
