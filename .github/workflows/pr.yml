@@ -50,14 +50,15 @@ jobs:
 
   snyk-monitor:
     runs-on: ubuntu-latest
-    # needs: docker-build-and-scan
+    needs: docker-build-and-scan
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk monitoring
+        working-directory: build
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          image: build/${{ env.IMAGE_NAME }}
+          image: ${{ env.IMAGE_NAME }}
           args: --file=Dockerfile --policy-path=./.snyk --org=dwp-dataworks -d
