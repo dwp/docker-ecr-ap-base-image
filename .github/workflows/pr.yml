@@ -59,5 +59,5 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          image: ${{ env.IMAGE_NAME }}
-          args: --file=./build/Dockerfile --policy-path=./.snyk --org=dwp-dataworks -d
+          image: build/${{ env.IMAGE_NAME }}
+          args: --file=Dockerfile --policy-path=./.snyk --org=dwp-dataworks -d
