@@ -10,13 +10,13 @@ env:
   IMAGE_NAME: docker-ecr-ap-base-image
 
 jobs:
-  docker-build-and-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker image
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest . -q
-        working-directory: build
+  # docker-build-and-scan:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Build Docker image
+  #       run: docker build -t ${{ env.IMAGE_NAME }}:latest . -q
+  #       working-directory: build
 
   format:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
 
   snyk-monitor:
     runs-on: ubuntu-latest
-    needs: docker-build-and-scan
+    # needs: docker-build-and-scan
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk monitoring
@@ -60,4 +60,4 @@ jobs:
         with:
           command: monitor
           image: ${{ env.IMAGE_NAME }}
-          args: --file=Dockerfile --policy-path=./.snyk --org=dwp-dataworks
+          args: --file=./build/Dockerfile --policy-path=./.snyk --org=dwp-dataworks -d
