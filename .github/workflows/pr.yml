@@ -52,7 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker-build-and-scan
     steps:
-      - uses: actions/checkout@v2
       - name: Run Snyk monitoring
         uses: snyk/actions/docker@master
         env:
