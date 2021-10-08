@@ -118,7 +118,7 @@ meta:
               set -x
               terraform workspace show
               terraform init
-              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account -out terraform.plan
+              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_requirements -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-github-config
         inputs:
@@ -127,6 +127,7 @@ meta:
           - name: gha_ecr_sts_creds
         params:
           TF_VAR_github_token: ((dataworks-secrets.concourse_github_pat))
+          TF_VAR_docker_ecr_ap_base_image_gha_requirements: ((dataworks.docker_ecr_ap_base_image_requirements))
     terraform-apply:
       task: terraform-apply
       .: (( inject meta.plan.terraform-common-config ))
@@ -164,7 +165,7 @@ meta:
               set -x
               terraform workspace show
               terraform init
-              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account $DETAILED_EXITCODE
+              terraform plan -target github_actions_secret.dev_docker_ecr_ap_base_image_access_key_id -target github_actions_secret.dev_docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.dev_docker_ecr_ap_base_image_access_session_token -target github_actions_secret.dev_docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_access_key_id -target github_actions_secret.docker_ecr_ap_base_image_access_secret_key -target github_actions_secret.docker_ecr_ap_base_image_access_session_token -target github_actions_secret.docker_ecr_ap_base_image_aws_account -target github_actions_secret.docker_ecr_ap_base_image_requirements $DETAILED_EXITCODE
           dir: dataworks-github-config
         inputs:
           - name: dataworks-github-config
@@ -185,6 +186,7 @@ meta:
         TF_VAR_github_email: ((dataworks.concourse_github_email))
         TF_VAR_terraform_12_version: ((dataworks.terraform_12_version))
         TF_VAR_terraform_13_version: ((dataworks.terraform_13_version))
+        TF_VAR_docker_ecr_ap_base_image_gha_requirements: ((dataworks.docker_ecr_ap_base_image_requirements))
     terraform-plan:
       task: terraform-plan
       .: (( inject meta.plan.terraform-common-config ))
