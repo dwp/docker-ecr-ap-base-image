@@ -51,10 +51,12 @@ jobs:
   snyk-monitor:
     runs-on: ubuntu-latest
     needs: docker-build-and-scan
+    defaults:
+      run:
+        working-directory: ./build
     steps:
       - uses: actions/checkout@v2
       - name: Run Snyk monitoring
-        working-directory: build
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
