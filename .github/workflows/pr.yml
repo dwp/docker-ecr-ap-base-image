@@ -60,4 +60,4 @@ jobs:
         with:
           command: monitor
           image: build/${{ env.IMAGE_NAME }}
-          args: --file=Dockerfile --policy-path=./.snyk --org=dwp-dataworks -d
+          args: --file=./build/Dockerfile --policy-path=./build/.snyk --org=dwp-dataworks -d
