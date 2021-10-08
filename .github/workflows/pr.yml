@@ -10,13 +10,13 @@ env:
   IMAGE_NAME: docker-ecr-ap-base-image
 
 jobs:
-  # docker-build-and-scan:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Build Docker image
-  #       run: docker build -t ${{ env.IMAGE_NAME }}:latest . -q
-  #       working-directory: build
+  docker-build-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest . -q
+        working-directory: build
 
   format:
     runs-on: ubuntu-latest
