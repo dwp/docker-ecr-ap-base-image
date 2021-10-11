@@ -70,13 +70,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Pull image from Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: docker-poc-gha-ecr
-          IMAGE_TAG: latest
-        run: |
-          docker pull -q $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Run Snyk monitoring
         uses: snyk/actions/docker@master
         env:
