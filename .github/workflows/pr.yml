@@ -73,7 +73,7 @@ jobs:
       - name: Pull image from Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.IMAGE_NAME }}
+          ECR_REPOSITORY: docker-poc-gha-ecr
           IMAGE_TAG: latest
         run: |
           docker pull -q $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -83,7 +83,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          image: ${{ env.IMAGE_NAME }}
+          image: docker-poc-gha-ecr
           args: --file=./build/Dockerfile --policy-path=./build/.snyk --org=dwp-dataworks
 
 
