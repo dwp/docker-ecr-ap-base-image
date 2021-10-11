@@ -17,6 +17,14 @@ jobs:
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE_NAME }}:latest . -q
         working-directory: build
+      - name: Run Snyk monitoring
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+          image: ${{ env.IMAGE_NAME }}
+          args: --file=./build/Dockerfile --severity-threshold=high --exclude-base-image-vulns --policy-path=./build/.snyk --org=dwp-dataworks -d
 
   format:
     runs-on: ubuntu-latest
@@ -47,4 +55,3 @@ jobs:
           git checkout $GITHUB_HEAD_REF
           git commit -am "Fixup: Format Python code with Black"
           git push
-
