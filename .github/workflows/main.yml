@@ -87,13 +87,26 @@ jobs:
     needs: publish-docker
     steps:
       - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEV_ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.DEV_ECR_AWS_SESSION_TOKEN }}
+          aws-region: eu-west-2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - name: Run Snyk monitoring
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: latest
         with:
           command: monitor
-          image: ${{ secrets.DEV_ECR_AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.IMAGE_NAME }}:latest
+          image: $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG
           args: --file=./build/Dockerfile --policy-path=./build/.snyk --org=dwp-dataworks
 
   snyk-monitor-mgt:
