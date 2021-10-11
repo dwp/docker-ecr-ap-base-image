@@ -76,7 +76,7 @@ jobs:
           ECR_REPOSITORY: ${{ env.IMAGE_NAME }}
           IMAGE_TAG: latest
         run: |
-          docker pull -q $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . -q
       - name: Run Snyk monitoring
         uses: snyk/actions/docker@master
         env:
