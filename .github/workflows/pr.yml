@@ -82,3 +82,4 @@ jobs:
           image: ${{ secrets.DEV_ECR_AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.IMAGE_NAME }}:latest
           args: --file=./build/Dockerfile --policy-path=./build/.snyk --org=dwp-dataworks
 
+
