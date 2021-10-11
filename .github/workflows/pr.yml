@@ -81,3 +81,4 @@ jobs:
           command: monitor
           image: $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG
           args: --file=./build/Dockerfile --policy-path=./build/.snyk --org=dwp-dataworks
+
