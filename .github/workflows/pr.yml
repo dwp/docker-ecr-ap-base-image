@@ -112,8 +112,6 @@ jobs:
           export AWS_REGION AWS_ACCOUNT DEV_AWS_ACCOUNT ;
           export ECR_REQUIREMENTS ;
           ls -al ;
-          echo -e "$ECR_REQUIREMENTS" > requirements.txt ;
-          ls -al ;
           ./build_and_push_to_ecr.sh
         working-directory: build
 
