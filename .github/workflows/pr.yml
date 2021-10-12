@@ -116,3 +116,4 @@ jobs:
           ls -al ;
           ../build_and_push_to_ecr.sh
         working-directory: build
+
