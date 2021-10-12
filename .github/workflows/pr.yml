@@ -111,8 +111,8 @@ jobs:
           export DEV_AWS_ACCESS_KEY_ID DEV_AWS_SECRET_ACCESS_KEY DEV_AWS_SESSION_TOKEN ; 
           export AWS_REGION AWS_ACCOUNT DEV_AWS_ACCOUNT ;
           export ECR_REQUIREMENTS ;
-          ls . ; ls ./build ;
+          ls -al ;
           echo -e "$ECR_REQUIREMENTS" > requirements.txt
-          ls . ; ls ./build ;
+          ls -al ;
           ../build_and_push_to_ecr.sh
         working-directory: build
