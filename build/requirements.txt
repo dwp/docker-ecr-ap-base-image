@@ -1,9 +1,3 @@
-# Standard:
-boto3>=1.12.31
-python-json-logger>=0.1.11
-PyYAML>=5.4
-pytest>=6.1.2
-# Jupyterhub:
 numpy>=1.21.1
 GitPython==3.1.14
 ipykernel==5.5.3
