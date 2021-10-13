@@ -24,7 +24,7 @@ jobs:
         with:
           command: monitor
           image: ${{ env.IMAGE_NAME }}
-          args: --file=./build/Dockerfile --severity-threshold=high --exclude-base-image-vulns --policy-path=./build/.snyk --org=dwp-dataworks -d
+          args: --file=./build/Dockerfile --severity-threshold=high --exclude-base-image-vulns --policy-path=./build/.snyk --org=dwp-dataworks
 
   format:
     runs-on: ubuntu-latest
