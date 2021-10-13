@@ -11,7 +11,7 @@ RUN python3 -m ensurepip && \
 
 ADD requirements.txt /srv/jupyterhub/
 ARG CRYPTOGRAPHY_DONT_BUILD_RUST=1
-RUN pip3 install --default-timeout=100 -r /srv/jupyterhub/requirements.txt
+RUN pip3 install --default-timeout=100 --ignore-installed -r /srv/jupyterhub/requirements.txt
 
 RUN jupyter lab build --minimize=False \
     && jupyter nbextension enable --py --sys-prefix widgetsnbextension \
