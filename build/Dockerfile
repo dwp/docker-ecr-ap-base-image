@@ -2,7 +2,7 @@ FROM alpine:3.13
 
 RUN apk add --no-cache alpine-sdk bash curl-dev curl g++ gcc gfortran krb5-dev krb5-libs libffi-dev nodejs npm openssl pkgconfig python3 python3-dev py3-pyzmq linux-pam git \
     && apk add --no-cache py3-lxml libgfortran py3-numpy py3-numpy-dev py3-scipy py3-scikit-learn freetype-dev libjpeg-turbo-dev libpng-dev zlib-dev libgcc libquadmath \
-    && apk add --no-cache musl lapack-dev libexecinfo-dev openblas-dev libgomp libxml2-dev libxslt1-dev
+    && apk add --no-cache musl lapack-dev libexecinfo-dev openblas-dev libgomp libxml2-dev libxslt-dev
 
 RUN npm install -g configurable-http-proxy
 
