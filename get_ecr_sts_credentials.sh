@@ -5,7 +5,7 @@ set -euo pipefail
 #No debug printing!
 set +x
 
-DURATION="${ASSUME_DURATION:=1800}"
+DURATION="${ASSUME_DURATION:=28800}"
 
 # Generate Dev Management Credentials
 DEV_MGMT_ACCOUNT="$(jq -r '."management-dev"' < accounts.json)"
