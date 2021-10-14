@@ -38,7 +38,7 @@ spacy-legacy>=3.0.8
 srsly==2.4.1
 thinc==8.0.8
 typer==0.3.2 
-typing-extensions==3.10.0.0
+typing-extensions==3.10.0
 urllib3==1.26.6
 wasabi==0.8.2
 threadpoolctl==2.0.0

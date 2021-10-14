@@ -2,16 +2,16 @@ FROM alpine:3.13
 
 RUN apk add --no-cache alpine-sdk bash curl-dev curl g++ gcc gfortran krb5-dev krb5-libs libffi-dev nodejs npm openssl pkgconfig python3 python3-dev py3-pyzmq linux-pam git \
     && apk add --no-cache py3-lxml libgfortran py3-numpy py3-numpy-dev py3-scipy py3-scikit-learn freetype-dev libjpeg-turbo-dev libpng-dev zlib-dev libgcc libquadmath \
-    && apk add --no-cache musl lapack-dev libexecinfo-dev openblas-dev libgomp
+    && apk add --no-cache musl lapack-dev libexecinfo-dev openblas-dev libgomp libxml2-dev libxslt-dev
 
 RUN npm install -g configurable-http-proxy
 
 RUN python3 -m ensurepip && \
-    pip3 install --upgrade pip setuptools wheel pycurl
+    pip3 install --upgrade pip setuptools wheel pycurl lxml
 
 ADD requirements.txt /srv/jupyterhub/
 ARG CRYPTOGRAPHY_DONT_BUILD_RUST=1
-RUN pip3 install --default-timeout=100 -r /srv/jupyterhub/requirements.txt
+RUN pip3 install --default-timeout=200 --ignore-installed -r /srv/jupyterhub/requirements.txt
 
 RUN jupyter lab build --minimize=False \
     && jupyter nbextension enable --py --sys-prefix widgetsnbextension \
