@@ -1,5 +1,10 @@
 resource "aws_ecr_repository" "docker-ecr-ap-base-image" {
   name = "docker-ecr-ap-base-image"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
   tags = merge(
     local.common_tags,
     { DockerHub : "dwpdigital/docker-ecr-ap-base-image" }
