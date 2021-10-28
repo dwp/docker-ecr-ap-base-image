@@ -21,7 +21,6 @@ RUN apt-get install --yes --no-install-recommends \
     nano-tiny \
     tzdata \
     unzip \
-    vim-tiny \
     # git-over-ssh
     openssh-client \
     # TODO: check if these are needed and describe
@@ -37,11 +36,9 @@ RUN apt-get install --yes --no-install-recommends \
     texlive-fonts-recommended \
     texlive-plain-generic
 
-RUN apt-get install --yes --no-install-recommends build-essential bash libcurl4-openssl-dev fonts-dejavu curl gfortran libkrb5-dev nodejs npm openssl python3 python3-pip python3-distutils python3-dev libpam0g \
+RUN apt-get install --yes --no-install-recommends build-essential libcurl4-openssl-dev fonts-dejavu curl gfortran libkrb5-dev nodejs npm openssl python3 python3-pip python3-distutils python3-dev libpam0g \
     && apt-get install --yes --no-install-recommends python3-lxml libgfortran5 python3-numpy python3-numpy-dev python3-scipy python3-sklearn python3-sklearn-lib libfreetype-dev libjpeg-turbo8-dev libpng-dev libgcc-10-dev libquadmath0 \
     && apt-get install --yes --no-install-recommends musl libblas-dev liblapack-dev libopenblas-dev libxml2-dev libxslt-dev
-
-RUN apt-get install --yes --no-install-recommends ffmpeg dvipng cm-super
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
