@@ -23,8 +23,6 @@ RUN apt-get install --yes --no-install-recommends \
     unzip \
     # git-over-ssh
     openssh-client \
-    # TODO: check if these are needed and describe
-    inkscape \
     libsm6 \
     libxext-dev \
     libxrender1 \
