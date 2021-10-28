@@ -1,13 +1,41 @@
-FROM alpine:3.13
+ARG ROOT_CONTAINER=ubuntu:focal
 
-RUN apk add --no-cache alpine-sdk bash curl-dev curl g++ gcc gfortran krb5-dev krb5-libs libffi-dev nodejs npm openssl pkgconfig python3 python3-dev py3-pyzmq linux-pam git \
-    && apk add --no-cache py3-lxml libgfortran py3-numpy py3-numpy-dev py3-scipy py3-scikit-learn freetype-dev libjpeg-turbo-dev libpng-dev zlib-dev libgcc libquadmath \
-    && apk add --no-cache musl lapack-dev libexecinfo-dev openblas-dev libgomp libxml2-dev libxslt-dev
+FROM $ROOT_CONTAINER
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    tini \
+    wget \
+    ca-certificates \
+    sudo \
+    locales \
+    fonts-liberation \
+    run-one && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
+
+RUN apt-get install --yes --no-install-recommends \
+    # Common useful utilities
+    git \
+    tzdata \
+    unzip \
+    # git-over-ssh
+    openssh-client \
+    libsm6 \
+    libxext-dev \
+    libxrender1 \
+    lmodern \
+    netcat nodejs software-properties-common
+
+RUN apt-get install --yes --no-install-recommends build-essential libcurl4-openssl-dev fonts-dejavu curl gfortran libkrb5-dev nodejs npm openssl python3 python3-pip python3-distutils python3-dev libpam0g \
+    && apt-get install --yes --no-install-recommends python3-lxml libgfortran5 python3-numpy python3-numpy-dev python3-scipy python3-sklearn python3-sklearn-lib libfreetype-dev libjpeg-turbo8-dev libpng-dev libgcc-10-dev libquadmath0 \
+    && apt-get install --yes --no-install-recommends musl libblas-dev liblapack-dev libopenblas-dev libxml2-dev libxslt-dev
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g configurable-http-proxy
-
-RUN python3 -m ensurepip && \
-    pip3 install --upgrade pip setuptools wheel pycurl lxml
+RUN pip3 install --upgrade pip setuptools wheel pycurl lxml
 
 ADD requirements.txt /srv/jupyterhub/
 ARG CRYPTOGRAPHY_DONT_BUILD_RUST=1
@@ -19,24 +47,22 @@ RUN jupyter lab build --minimize=False \
 
 RUN python3 -m spacy download en_core_web_sm
 
-WORKDIR /usr/lib/python3.8/site-packages/
+WORKDIR /usr/local/lib/python3.8/dist-packages/
 
 RUN jupyter-kernelspec install sparkmagic/kernels/pysparkkernel \
     && jupyter-kernelspec install sparkmagic/kernels/sparkrkernel \
     && jupyter serverextension enable --py sparkmagic
 
-ADD proxy_configuration.py /usr/lib/python3.8/site-packages/proxy_configuration.py
+ADD proxy_configuration.py /usr/local/lib/python3.8/dist-packages/proxy_configuration.py
 ADD jupyterhub_config.py /etc/jupyterhub/conf/jupyterhub_config.py
 
 # Add message logging
-ADD handlers.py /usr/lib/python3.8/site-packages/notebook/services/kernels/handlers.py
+ADD handlers.py /usr/local/lib/python3.8/dist-packages/notebook/services/kernels/handlers.py
 
 # Create template user home
 RUN mkdir -p /etc/skel/.sparkmagic /etc/skel/.jupyter/
 ADD jupyter_local_conf.py /etc/skel/.jupyter/jupyter_notebook_config.py
 ADD template_sparkmagic_config.json /etc/skel/.sparkmagic/config.json
-
-RUN apk del alpine-sdk g++ gcc krb5-dev libffi-dev npm pkgconfig python3-dev py3-numpy-dev zlib-dev
 
 ADD entrypoint.sh /
 RUN chmod +x /entrypoint.sh
