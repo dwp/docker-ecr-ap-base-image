@@ -18,7 +18,6 @@ RUN apt-get update --yes && \
 RUN apt-get install --yes --no-install-recommends \
     # Common useful utilities
     git \
-    nano-tiny \
     tzdata \
     unzip \
     # git-over-ssh
@@ -27,12 +26,7 @@ RUN apt-get install --yes --no-install-recommends \
     libxext-dev \
     libxrender1 \
     lmodern \
-    netcat nodejs software-properties-common \
-    # nbconvert dependencies
-    # https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
-    texlive-xetex \
-    texlive-fonts-recommended \
-    texlive-plain-generic
+    netcat nodejs software-properties-common
 
 RUN apt-get install --yes --no-install-recommends build-essential libcurl4-openssl-dev fonts-dejavu curl gfortran libkrb5-dev nodejs npm openssl python3 python3-pip python3-distutils python3-dev libpam0g \
     && apt-get install --yes --no-install-recommends python3-lxml libgfortran5 python3-numpy python3-numpy-dev python3-scipy python3-sklearn python3-sklearn-lib libfreetype-dev libjpeg-turbo8-dev libpng-dev libgcc-10-dev libquadmath0 \
