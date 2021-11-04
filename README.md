@@ -11,7 +11,7 @@ This repo is a base to create new Docker building repos, adding the githooks sub
 Running aviator will create the pipeline required on the AWS-Concourse instance, in order pass a mandatory CI ran status check.  this will likely require you to login to Concourse, if you haven't already.
 
 For more information please go to:
-https://git.ucd.gpn.gov.uk/dip/datsci-model-build.wiki.git
+https://git.ucd.gpn.gov.uk/dip/datsci-model-build/wiki
 
 ## Environment Variables
 This jupyterhub image requires the following environment variables at runtime:
